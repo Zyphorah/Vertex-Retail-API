@@ -1,0 +1,42 @@
+﻿@page
+@model _521.tpfinal.web.Pages.ProductsModel
+@{
+    ViewData["Title"] = "Produits";
+}
+
+<h1>Catalogue des Produits</h1>
+
+<!-- (À ajouter par l'étudiant) : Filtre par catégorie -->
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-page="/Admin/AddProduct" class="btn btn-primary">Ajouter un produit</a>
+    </p>
+}
+
+<div class="row">
+    @foreach (var product in Model.Products)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@product.Name</h5>
+                    <p class="card-text">@product.Description</p>
+                    <p class->card-text"><strong>@product.Price.ToString("C")</strong></p>
+                    <p class="card-text"><small class="text-muted">@product.Category</small></p>
+
+                    <a href="#" class="btn btn-secondary">Voir détails</a>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <!-- (À implémenter par l'étudiant) : Formulaire pour ajouter au panier -->
+                        <form method="post" asp-page-handler="AddToCart" class="d-inline">
+                            <input type="hidden" name="productId" value="@product.Id" />
+                            <button type="submit" class="btn btn-success">Ajouter au panier</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
