@@ -6,7 +6,7 @@ public class AuthController : ControllerBase
 {
     private readonly IUsersRepository _usersRepository;
 
-    public Auth(IUsersRepository usersRepository)
+    public AuthController(IUsersRepository usersRepository)
     {
         _usersRepository = usersRepository;
     }

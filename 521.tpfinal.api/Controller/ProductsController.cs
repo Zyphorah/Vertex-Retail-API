@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/[controller]")]
 public class ProductsController : ControllerBase
 {
-    private readonly IDbProducts _productsRepository;
+    private readonly IDbProductsRepository _productsRepository;
 
-    public ProductsController(IDbProducts productsRepository)
+    public ProductsController(IDbProductsRepository productsRepository)
     {
         _productsRepository = productsRepository;
     }
