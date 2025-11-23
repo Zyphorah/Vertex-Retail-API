@@ -15,7 +15,6 @@ public class AppDbContext : DbContext
     public DbSet<ShoppingCart> ShoppingCarts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
 
-
     // Méthode où l'on peut ajouter des validations de type Flutent API
     // Voir plus bas pour plus d'information.
     protected override void OnModelCreating(ModelBuilder modelBuilder)
