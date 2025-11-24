@@ -1,4 +1,7 @@
-public class RegisterResponseDto
+namespace _521.tpfinal.api.models.Dtos.LoginModel
 {
-    public required string Message { get; set; }
+    public class RegisterResponseDto
+    {
+        public required string Message { get; set; }
+    }
 }

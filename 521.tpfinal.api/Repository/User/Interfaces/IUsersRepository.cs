@@ -1,8 +1,13 @@
-public interface IUsersRepository
+using _521.tpfinal.api.models;
+
+namespace _521.tpfinal.api.Repository.User.Interfaces
 {
-    public Task Add(User user);
-    public Task<bool> Delete(User user);
-    public Task<bool> Update(User user);
-    public List<User> GetAll();
-    public User? GetById(Guid id);
+    public interface IUsersRepository
+    {
+        public Task Add(models.User user);
+        public Task<bool> Delete(models.User user);
+        public Task<bool> Update(models.User user);
+        public List<models.User> GetAll();
+        public models.User? GetById(Guid id);
+    }
 }

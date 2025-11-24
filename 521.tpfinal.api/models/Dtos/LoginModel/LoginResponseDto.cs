@@ -1,5 +1,8 @@
-public class LoginResponseDto
+namespace _521.tpfinal.api.models.Dtos.LoginModel
 {
-    public required string Token { get; set; }
-    public DateTime Expiration { get; set; }
+    public class LoginResponseDto
+    {
+        public required string Token { get; set; }
+        public DateTime Expiration { get; set; }
+    }
 }

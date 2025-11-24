@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace _521.tpfinal.api.models.Dtos.ShopingCart
+namespace _521.tpfinal.api.models.Dtos.CartItem
 {
     public class AddCartItemDto
     {

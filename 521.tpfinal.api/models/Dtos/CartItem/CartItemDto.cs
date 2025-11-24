@@ -1,4 +1,4 @@
-namespace _521.tpfinal.api.models.Dtos.ShopingCart
+namespace _521.tpfinal.api.models.Dtos.CartItem
 {
     public class CartItemDto
     {
@@ -10,3 +10,4 @@ namespace _521.tpfinal.api.models.Dtos.ShopingCart
         public required decimal SubTotal { get; set; }
     }
 }
+

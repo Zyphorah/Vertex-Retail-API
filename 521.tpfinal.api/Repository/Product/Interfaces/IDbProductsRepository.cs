@@ -1,9 +1,13 @@
-public interface IDbProductsRepository
+using _521.tpfinal.api.models;
+
+namespace _521.tpfinal.api.Repository.Product.Interfaces
 {
-    public Task<List<Product>> GetAll();
-    public Task<Product?> GetById(Guid id);
-    public Task<List<Product>> GetByCategory(string category);
-    public Task Add(Product product);
-    public Task Update(Product product);
-    public Task<bool> Delete(Product product);
+    public interface IDbProductsRepository
+    {
+        public Task<List<models.Product>> GetAll();
+        public Task<models.Product?> GetById(Guid id);
+        public Task Add(models.Product product);
+        public Task Update(models.Product product);
+        public Task<bool> Delete(models.Product product);
+    }
 }

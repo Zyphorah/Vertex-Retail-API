@@ -1,28 +1,69 @@
+using _521.tpfinal.api.models;
+using _521.tpfinal.api.Repository.Product.Interfaces;
 
-public class DbProductsRepository : IDbProductsRepository
+namespace _521.tpfinal.api.Repository.Product
 {
-    public Task Add(Product product)
+    public class DbProductsRepository : IDbProductsRepository
     {
-        throw new NotImplementedException();
-    }
+        private readonly AppDbContext _context;
 
-    public Task<bool> Delete(Product product)
-    {
-        throw new NotImplementedException();
-    }
+        public DbProductsRepository(AppDbContext context)
+        {
+            this._context = context;
+        }
 
-    public Task GetAll()
-    {
-        throw new NotImplementedException();
-    }
+        public Task Add(models.Product product)
+        {   
+            var existingProduct = this._context.Products.FirstOrDefault(p => p.Id == product.Id);
+            if (existingProduct != null)
+            {
+                throw new Exception($"Produit avec l'ID {product.Id} existe déjà");
+            }
+            this._context.Products.Add(product);
+            return this._context.SaveChangesAsync();
+        }
 
-    public Task GetById(Guid id)
-    {
-        throw new NotImplementedException();
-    }
+        public Task<bool> Delete(models.Product product)
+        {
+            var existingProduct = this._context.Products.FirstOrDefault(p => p.Id == product.Id);
+            if (existingProduct == null)
+            {
+                throw new Exception($"Produit avec l'ID {product.Id} non trouvé");  
+            }
+            this._context.Products.Remove(product);
+            return Task.FromResult(this._context.SaveChanges() > 0);
+        }
 
-    public Task Update(Product product)
-    {
-        throw new NotImplementedException();
+        public Task<List<models.Product>> GetAll()
+        {
+            if (this._context.Products == null)
+            {
+                throw new Exception("Aucun produit trouvé");
+            }
+
+            return Task.FromResult(this._context.Products.ToList());
+        }
+
+        public Task<models.Product?> GetById(Guid id)
+        {
+            if (this._context.Products == null)
+            {
+                throw new Exception("Aucun produit trouvé");
+            }
+
+            return Task.FromResult(this._context.Products.FirstOrDefault(p => p.Id == id));
+        }
+
+        public Task Update(models.Product product)
+        {
+            var existingProduct = this._context.Products.FirstOrDefault(p => p.Id == product.Id);
+            if (existingProduct == null)
+            {
+                throw new Exception($"Produit avec l'ID {product.Id} non trouvé");
+            }
+
+            this._context.Products.Update(product);
+            return this._context.SaveChangesAsync();
+        }
     }
 }

@@ -1,32 +1,36 @@
+using _521.tpfinal.api.models;
+using _521.tpfinal.api.Repository.User.Interfaces;
 
-public class DbUsersRepository : IUsersRepository
+namespace _521.tpfinal.api.Repository.User
 {
-    private readonly AppDbContext _context; 
-
-    public DbUsersRepository(AppDbContext context)
+    public class DbUsersRepository : IUsersRepository
     {
-        _context = context;
-    }
+        private readonly AppDbContext _context; 
 
-    public Task Add(User user)
-    {
-        // Vérifier que l'ID n'existe pas déjà en BD
-        if (this._context.Users.Any(u => u.Id == user.Id))
+        public DbUsersRepository(AppDbContext context)
         {
-            throw new Exception($"Un utilisateur avec l'ID {user.Id} existe déjà");
+            _context = context;
         }
 
-        // Vérifier que l'email n'existe pas déjà en BD
-        if (this._context.Users.Any(u => u.Email == user.Email))
+        public Task Add(models.User user)
         {
-            throw new Exception($"L'email '{user.Email}' est déjà utilisé");
+            // Vérifier que l'ID n'existe pas déjà en BD
+            if (this._context.Users.Any(u => u.Id == user.Id))
+            {
+                throw new Exception($"Un utilisateur avec l'ID {user.Id} existe déjà");
+            }
+
+            // Vérifier que l'email n'existe pas déjà en BD
+            if (this._context.Users.Any(u => u.Email == user.Email))
+            {
+                throw new Exception($"L'email '{user.Email}' est déjà utilisé");
+            }
+
+            this._context.Users.Add(user);
+            return this._context.SaveChangesAsync();
         }
 
-        this._context.Users.Add(user);
-        return this._context.SaveChangesAsync();
-    }
-
-    public Task<bool> Delete(User user)
+        public Task<bool> Delete(models.User user)
     {
         if (user == null)
         {
@@ -43,12 +47,12 @@ public class DbUsersRepository : IUsersRepository
         return Task.FromResult(this._context.SaveChanges() > 0);
     }
 
-    public List<User> GetAll()
+    public List<models.User> GetAll()
     {
         return this._context.Users.ToList();
     }
 
-    public User? GetById(Guid id)
+    public models.User? GetById(Guid id)
     {
         if (id == Guid.Empty)
         {
@@ -65,7 +69,7 @@ public class DbUsersRepository : IUsersRepository
         return existingUser;
     }
 
-    public Task<bool> Update(User user)
+    public Task<bool> Update(models.User user)
     {
         if (user == null)
         {
@@ -95,5 +99,6 @@ public class DbUsersRepository : IUsersRepository
 
         this._context.Users.Update(user);
         return Task.FromResult(this._context.SaveChanges() > 0);
+    }
     }
 }
