@@ -14,8 +14,18 @@ namespace _521.tpfinal.api.Controller
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                if (string.IsNullOrWhiteSpace(registerDto.PasswordHash) || registerDto.PasswordHash.Length < 6)
+                {
+                    return BadRequest(new { error = "Le mot de passe doit contenir au moins 6 caractères" });
+                }
+
                 await this._authService.Register(registerDto);
-                return Ok(new { message = "Utilisateur enregistré avec succès" });
+                return StatusCode(201, new { message = "Utilisateur enregistré avec succès" });
             }
             catch (Exception ex)
             {
@@ -28,6 +38,11 @@ namespace _521.tpfinal.api.Controller
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 var response = await this._authService.Login(loginDto);
                 return Ok(new 
                 { 

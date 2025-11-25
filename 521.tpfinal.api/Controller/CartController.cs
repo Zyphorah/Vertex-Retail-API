@@ -46,6 +46,16 @@ namespace _521.tpfinal.api.Controller
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                if (itemDto.Quantity <= 0)
+                {
+                    return BadRequest(new { error = "La quantité doit être au moins 1" });
+                }
+
                 var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
                     ?? throw new Exception("Utilisateur non identifié"));
 
@@ -73,7 +83,7 @@ namespace _521.tpfinal.api.Controller
 
                 await _shoppingCartService.AddItemToCart(addItemDto);
 
-                return Ok(new { message = "Produit ajouté au panier avec succès" });
+                return StatusCode(201, new { message = "Produit ajouté au panier avec succès" });
             }
             catch (Exception ex)
             {

@@ -25,8 +25,18 @@ namespace _521.tpfinal.api.Controller
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                if (string.IsNullOrWhiteSpace(userDto.PasswordHash) || userDto.PasswordHash.Length < 6)
+                {
+                    return BadRequest(new { error = "Le mot de passe doit contenir au moins 6 caractères" });
+                }
+
                 await this._usersService.AddAdministrator(userDto);
-                return Ok(new { message = "Admin créé avec succès" });
+                return StatusCode(201, new { message = "Admin créé avec succès" });
             }
             catch (Exception ex)
             {
@@ -39,6 +49,11 @@ namespace _521.tpfinal.api.Controller
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 // Récupère le rôle et l'ID de l'utilisateur courant
                 var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -53,6 +68,12 @@ namespace _521.tpfinal.api.Controller
                 if (userRole != "Admin" && !string.IsNullOrEmpty(updateDto.Role))
                 {
                     return Forbid("Seul un admin peut modifier le rôle");
+                }
+
+                // Validation supplémentaire
+                if (!string.IsNullOrWhiteSpace(updateDto.PasswordHash) && updateDto.PasswordHash.Length < 6)
+                {
+                    return BadRequest(new { error = "Le mot de passe doit contenir au moins 6 caractères" });
                 }
 
                 await this._usersService.Update(id, updateDto);
