@@ -27,7 +27,7 @@
 
                     <a href="#" class="btn btn-secondary">Voir détails</a>
 
-                    @if (User.Identity.IsAuthenticated)
+                    @if (User?.Identity?.IsAuthenticated == true)
                     {
                         <!-- (À implémenter par l'étudiant) : Formulaire pour ajouter au panier -->
                         <form method="post" asp-page-handler="AddToCart" class="d-inline">
