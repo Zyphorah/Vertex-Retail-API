@@ -32,7 +32,7 @@ namespace _521.tpfinal.api.Controller
                 return BadRequest(new { error = ex.Message });
             }
         }
-        
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, models.Dtos.User.UpdateUserDto updateDto)
         {
@@ -63,9 +63,6 @@ namespace _521.tpfinal.api.Controller
             }
         }
 
-        /// <summary>
-        /// Supprime un usager (Admin seulement)
-        /// </summary>
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)

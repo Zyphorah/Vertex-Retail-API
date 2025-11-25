@@ -6,13 +6,7 @@ namespace _521.tpfinal.api.Controller
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-        private readonly IDbProductsRepository _productsRepository;
-
-        public ProductsController(IDbProductsRepository productsRepository)
-        {
-            _productsRepository = productsRepository;
-        }
-
+        
         
     }
 }

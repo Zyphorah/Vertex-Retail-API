@@ -1,6 +1,6 @@
 using _521.tpfinal.api.models.Dtos.Product;
 
-namespace _521.tpfinal.api.Services.ProductService.Interfaces
+namespace _521.tpfinal.api.Services.Product.Interfaces
 {
     public interface IProductService
     {

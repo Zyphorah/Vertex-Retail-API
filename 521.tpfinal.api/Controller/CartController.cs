@@ -6,12 +6,7 @@ namespace _521.tpfinal.api.Controller
     [Route("api/[controller]")]
     public class CartController : ControllerBase
     {
-        private readonly IDbShoppingCartRepository _shoppingCartRepository;
-
-        public CartController(IDbShoppingCartRepository shoppingCartRepository)
-        {
-            _shoppingCartRepository = shoppingCartRepository;
-        }
+        
 
     }
 }
