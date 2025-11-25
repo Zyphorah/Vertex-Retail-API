@@ -1,4 +1,5 @@
 using _521.tpfinal.web.Services;
+using _521.tpfinal.web.Services.Auth.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -8,9 +9,9 @@ using System.Security.Claims;
 
 namespace _521.tpfinal.web.Pages
 {
-    public class LoginModel(IApiService apiService) : PageModel
+    public class LoginModel(IAuthService authService) : PageModel
     {
-        private readonly IApiService _apiService = apiService;
+        private readonly IAuthService _authService = authService;
 
         [BindProperty]
         public required Models.Login Input { get; set; }
@@ -30,7 +31,7 @@ namespace _521.tpfinal.web.Pages
             }
             
             // 1. Appeler l'API pour tenter de se connecter
-            var (success, token) = await _apiService.LoginAsync(Input);
+            var (success, token) = await _authService.LoginAsync(Input);
 
             if (!success)
             {
