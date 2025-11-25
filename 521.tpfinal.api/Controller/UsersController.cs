@@ -3,6 +3,7 @@ using _521.tpfinal.api.Repository.User.Interfaces;
 using _521.tpfinal.api.Services.User.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using _521.tpfinal.api.Models.Constance;
 
 namespace _521.tpfinal.api.Controller
 {   
@@ -18,7 +19,7 @@ namespace _521.tpfinal.api.Controller
             this._usersService = usersService;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost("admin")]
         public async Task<IActionResult> CreateAdmin(models.Dtos.User.CreateUserDto userDto)
         {
@@ -63,7 +64,7 @@ namespace _521.tpfinal.api.Controller
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Roles.Admin)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
