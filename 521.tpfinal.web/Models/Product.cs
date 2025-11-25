@@ -1,13 +1,15 @@
-﻿namespace _521.tpfinal.web.Models
+namespace _521.tpfinal.api.models
 {
-    // Modèle simple pour un produit.
-    // Vous devrez le compléter pour correspondre à votre API.
     public class Product
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public decimal Price { get; set; }
-        public string Category { get; set; }
+        public required Guid Id { get; set; }
+        public required string Name { get; set; }
+        public required string Description { get; set; }
+        public required decimal Price { get; set; }
+        public required string Category { get; set; }
+        public required int Stock { get; set; }
+        
+        // Un produit peut avoir plusieurs CartItems donc une liste de plusieurs instance de même produit
+        public required List<CartItem> CartItems { get; set; }
     }
 }
