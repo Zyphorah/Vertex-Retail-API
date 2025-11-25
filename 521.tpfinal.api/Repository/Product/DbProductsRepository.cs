@@ -1,10 +1,14 @@
+using _521.tpfinal.api.models;
+using _521.tpfinal.api.Repository.Product.Interfaces;
+using ProductModel = _521.tpfinal.api.models.Product;
+
 namespace _521.tpfinal.api.Repository.Product
 {
-    public class DbProductsRepository(models.AppDbContext context) : Interfaces.IDbProductsRepository
+    public class DbProductsRepository(AppDbContext context) : IProductsRepository
     {
-        private readonly models.AppDbContext _context = context;
+        private readonly AppDbContext _context = context;
 
-        public Task Add(models.Product product)
+        public Task Add(ProductModel product)
         {   
             var existingProduct = this._context.Products.FirstOrDefault(p => p.Id == product.Id);
             if (existingProduct != null)
@@ -15,14 +19,14 @@ namespace _521.tpfinal.api.Repository.Product
             return this._context.SaveChangesAsync();
         }
 
-        public Task<bool> Delete(models.Product product)
+        public Task<bool> Delete(ProductModel product)
         {
             var existingProduct = this._context.Products.FirstOrDefault(p => p.Id == product.Id) ?? throw new Exception($"Produit avec l'ID {product.Id} non trouvé");
             this._context.Products.Remove(product);
             return Task.FromResult(this._context.SaveChanges() > 0);
         }
 
-        public Task<List<models.Product>> GetAll()
+        public Task<List<ProductModel>> GetAll()
         {
             if (this._context.Products == null)
             {
@@ -32,7 +36,7 @@ namespace _521.tpfinal.api.Repository.Product
             return Task.FromResult(this._context.Products.ToList());
         }
 
-        public Task<models.Product?> GetById(Guid id)
+        public Task<ProductModel?> GetById(Guid id)
         {
             if (this._context.Products == null)
             {
@@ -42,7 +46,7 @@ namespace _521.tpfinal.api.Repository.Product
             return Task.FromResult(this._context.Products.FirstOrDefault(p => p.Id == id));
         }
 
-        public Task Update(models.Product product)
+        public Task Update(ProductModel product)
         {
             var existingProduct = this._context.Products.FirstOrDefault(p => p.Id == product.Id) ?? throw new Exception($"Produit avec l'ID {product.Id} non trouvé");
             this._context.Products.Update(product);

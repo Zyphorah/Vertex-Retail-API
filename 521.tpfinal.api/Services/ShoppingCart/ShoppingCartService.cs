@@ -4,9 +4,9 @@ using _521.tpfinal.api.Repository.ShoppingCart.Interfaces;
 
 namespace _521.tpfinal.api.Services.ShoppingCart
 {
-    public class ShoppingCartService(IDbShoppingCartRepository shoppingCartRepository) : Interfaces.IShoppingCartService
+    public class ShoppingCartService(IShoppingCartRepository shoppingCartRepository) : Interfaces.IShoppingCartService
     {
-        private readonly IDbShoppingCartRepository _shoppingCartRepository = shoppingCartRepository;
+        private readonly IShoppingCartRepository _shoppingCartRepository = shoppingCartRepository;
 
         public Task Add(ShoppingCartDto cart)
         {

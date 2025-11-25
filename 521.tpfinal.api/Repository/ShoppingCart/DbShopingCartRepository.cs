@@ -1,6 +1,6 @@
 namespace _521.tpfinal.api.Repository.ShoppingCart
 {
-    public class DbShoppingCartRepository(models.AppDbContext context) : Interfaces.IDbShoppingCartRepository
+    public class DbShoppingCartRepository(models.AppDbContext context) : Interfaces.IShoppingCartRepository
     {
         private readonly models.AppDbContext _context = context;
 

@@ -1,6 +1,6 @@
 namespace _521.tpfinal.api.Repository.ShoppingCart.Interfaces
 {
-    public interface IDbShoppingCartRepository
+    public interface IShoppingCartRepository
     {
         // Panier
         public Task<models.ShoppingCart?> GetCartByUserId(Guid userId);
