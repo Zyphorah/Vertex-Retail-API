@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace _521.tpfinal.web.Pages
 {
-    public class LogoutModel : PageModel, Services.Logout.Interfaces.ILogout
+    public class LogoutModel : PageModel
     {
         public async Task<IActionResult> OnPostAsync()
         {
