@@ -1,4 +1,5 @@
 using _521.tpfinal.api.models;
+using _521.tpfinal.api.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -36,6 +37,8 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>();
+
+builder.Services.AddSingleton<PasswordHasher>();
 
 var app = builder.Build();
 

@@ -6,9 +6,10 @@ using _521.tpfinal.api.Utils;
 
 namespace _521.tpfinal.api.Services.User
 {
-    public class UsersService(Repository.User.Interfaces.IUsersRepository usersRepository) : Interfaces.IUsersService
+    public class UsersService(Repository.User.Interfaces.IUsersRepository usersRepository, PasswordHasher passwordHasher) : Interfaces.IUsersService
     {
         private readonly Repository.User.Interfaces.IUsersRepository _usersRepository = usersRepository;
+        private readonly PasswordHasher _passwordHasher = passwordHasher;
 
         private Task Add(CreateUserDto user, string role)
         {
@@ -17,9 +18,9 @@ namespace _521.tpfinal.api.Services.User
                 Id = Guid.NewGuid(),
                 Name = user.Name,
                 Email = user.Email,
-                PasswordHash = PasswordHasher.Hash(user.PasswordHash),
+                PasswordHash = _passwordHasher.Hash(user.PasswordHash, user.Email),
                 Role = role,
-                ShoppingCarts = new List<models.ShoppingCart>()
+                ShoppingCarts = []
             });
         }
 
@@ -31,20 +32,14 @@ namespace _521.tpfinal.api.Services.User
         public Task<bool> Delete(UserDto user)
         {
             // Récupérer l'utilisateur complet depuis la BD avec ses ShoppingCarts
-            var existingUser = this._usersRepository.GetById(user.Id);
-            
-            if (existingUser == null)
-            {
-                throw new Exception($"Utilisateur avec l'ID {user.Id} non trouvé");
-            }
-
+            var existingUser = this._usersRepository.GetById(user.Id) ?? throw new Exception($"Utilisateur avec l'ID {user.Id} non trouvé");
             return this._usersRepository.Delete(existingUser);
         }
 
         public List<UserDto> GetAll()
         {
             List<models.User> users = this._usersRepository.GetAll();
-            List<UserDto> userDtos = new List<UserDto>();
+            List<UserDto> userDtos = [];
 
             foreach (var user in users)
             {
@@ -55,7 +50,7 @@ namespace _521.tpfinal.api.Services.User
                     Email = user.Email,
                     Role = user.Role,
                     PasswordHash = user.PasswordHash,
-                    ShoppingCarts = user.ShoppingCarts.Select(sc => new ShoppingCartDto
+                    ShoppingCarts = [.. user.ShoppingCarts.Select(sc => new ShoppingCartDto
                     {
                         Id = sc.Id,
                         UserId = sc.UserId,
@@ -69,7 +64,7 @@ namespace _521.tpfinal.api.Services.User
                             SubTotal = ci.Quantity * ci.UnitPrice
                         }).ToList(),
                         TotalPrice = sc.TotalPrice
-                    }).ToList()
+                    })]
                 };
                 userDtos.Add(userDto);
             }
@@ -91,11 +86,11 @@ namespace _521.tpfinal.api.Services.User
                 Email = user.Email,
                 Role = user.Role,
                 PasswordHash = user.PasswordHash,
-                ShoppingCarts = user.ShoppingCarts.Select(sc => new ShoppingCartDto
+                ShoppingCarts = [.. user.ShoppingCarts.Select(sc => new ShoppingCartDto
                 {
                     Id = sc.Id,
                     UserId = sc.UserId,
-                    Items = sc.CartItems.Select(ci => new CartItemDto
+                    Items = [.. sc.CartItems.Select(ci => new CartItemDto
                     {
                         ShoppingCartId = ci.ShoppingCartId,
                         ProductId = ci.ProductId,
@@ -103,24 +98,19 @@ namespace _521.tpfinal.api.Services.User
                         ProductPrice = ci.UnitPrice,
                         Quantity = ci.Quantity,
                         SubTotal = ci.Quantity * ci.UnitPrice
-                    }).ToList(),
+                    })],
                     TotalPrice = sc.TotalPrice
-                }).ToList()
+                })]
             };
         }
 
         public Task<bool> Update(Guid id, UpdateUserDto user)
         {
-            var existingUser = this._usersRepository.GetById(id);
-            if (existingUser == null)
-            {
-                throw new Exception($"Utilisateur avec l'ID {id} non trouvé");
-            }
-
+            var existingUser = this._usersRepository.GetById(id) ?? throw new Exception($"Utilisateur avec l'ID {id} non trouvé");
             existingUser.Name = user.Name ?? existingUser.Name;
             existingUser.Email = user.Email ?? existingUser.Email;
             existingUser.PasswordHash = !string.IsNullOrWhiteSpace(user.PasswordHash) 
-                ? PasswordHasher.Hash(user.PasswordHash) 
+                ? _passwordHasher.Hash(user.PasswordHash, existingUser.Email) 
                 : existingUser.PasswordHash;
             existingUser.Role = user.Role ?? existingUser.Role;
 

@@ -16,7 +16,7 @@ namespace _521.tpfinal.api.Services.ShoppingCart
                 UserId = cart.UserId,
                 TotalPrice = cart.TotalPrice,
                 User = null!,
-                CartItems = new List<models.CartItem>()
+                CartItems = []
             });
         }
 
@@ -52,7 +52,7 @@ namespace _521.tpfinal.api.Services.ShoppingCart
                 UserId = cart.UserId,
                 TotalPrice = cart.TotalPrice,
                 User = null!,
-                CartItems = new List<models.CartItem>()
+                CartItems = []
             });
         }
 
@@ -66,7 +66,7 @@ namespace _521.tpfinal.api.Services.ShoppingCart
                 Id = cart.Id,
                 UserId = cart.UserId,
                 TotalPrice = cart.TotalPrice,
-                Items = cart.CartItems.Select(ci => new CartItemDto
+                Items = [.. cart.CartItems.Select(ci => new CartItemDto
                 {
                     ShoppingCartId = ci.ShoppingCartId,
                     ProductId = ci.ProductId,
@@ -74,14 +74,14 @@ namespace _521.tpfinal.api.Services.ShoppingCart
                     ProductPrice = ci.UnitPrice,
                     Quantity = ci.Quantity,
                     SubTotal = ci.Quantity * ci.UnitPrice
-                }).ToList()
+                })]
             };
         }
 
         public async Task<List<CartItemDto>> GetCartItems(Guid cartId)
         {
             var items = await this._shoppingCartRepository.GetCartItems(cartId);
-            return items.Select(ci => new CartItemDto
+            return [.. items.Select(ci => new CartItemDto
             {
                 ShoppingCartId = ci.ShoppingCartId,
                 ProductId = ci.ProductId,
@@ -89,7 +89,7 @@ namespace _521.tpfinal.api.Services.ShoppingCart
                 ProductPrice = ci.UnitPrice,
                 Quantity = ci.Quantity,
                 SubTotal = ci.Quantity * ci.UnitPrice
-            }).ToList();
+            })];
         }
 
         public async Task<bool> RemoveItemFromCart(Guid cartItemId)

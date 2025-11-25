@@ -18,7 +18,7 @@ namespace _521.tpfinal.api.Services.Product
                 Price = product.Price,
                 Category = product.Category,
                 Stock = product.Stock,
-                CartItems = new List<models.CartItem>()
+                CartItems = []
             });
         }
 
@@ -32,7 +32,7 @@ namespace _521.tpfinal.api.Services.Product
                 Price = product.Price,
                 Category = product.Category,
                 Stock = product.Stock,
-                CartItems = new List<models.CartItem>()
+                CartItems = []
             });
         }
 
@@ -72,7 +72,7 @@ namespace _521.tpfinal.api.Services.Product
                 Price = product.Price,
                 Category = product.Category,
                 Stock = product.Stock,
-                CartItems = new List<models.CartItem>()
+                CartItems = []
             });
         }
     }

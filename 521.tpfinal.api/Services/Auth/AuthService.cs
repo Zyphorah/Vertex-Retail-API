@@ -4,10 +4,11 @@ using _521.tpfinal.api.Utils;
 
 namespace _521.tpfinal.api.Services.Auth
 {
-    public class AuthService(Repository.User.Interfaces.IUsersRepository usersRepository, IConfiguration configuration) : Interfaces.IAuthService
+    public class AuthService(Repository.User.Interfaces.IUsersRepository usersRepository, IConfiguration configuration, PasswordHasher passwordHasher) : Interfaces.IAuthService
     {
         private readonly Repository.User.Interfaces.IUsersRepository _usersRepository = usersRepository;
-        private readonly JwtTokenHelper _jwtTokenHelper = new JwtTokenHelper(configuration);
+        private readonly JwtTokenHelper _jwtTokenHelper = new(configuration);
+        private readonly PasswordHasher _passwordHasher = passwordHasher;
 
         public Task<LoginResponseDto> Login(LoginModelDto loginDto)
         {
@@ -15,8 +16,8 @@ namespace _521.tpfinal.api.Services.Auth
             var users = _usersRepository.GetAll();
             var user = users.FirstOrDefault(u => u.Email == loginDto.Email) ?? throw new Exception("Email ou mot de passe incorrect");
 
-            // Vérifie le mot de passe avec hash
-            if (!PasswordHasher.Verify(loginDto.PasswordHash, user.PasswordHash))
+            // Vérifie le mot de passe avec hash (avec email comme salt supplémentaire)
+            if (!_passwordHasher.Verify(loginDto.PasswordHash, user.PasswordHash, user.Email))
                 throw new Exception("Email ou mot de passe incorrect");
 
             // Génère le JWT token 
@@ -35,7 +36,7 @@ namespace _521.tpfinal.api.Services.Auth
             {
                 Id = Guid.NewGuid(),
                 Email = registerDto.Email,
-                PasswordHash = PasswordHasher.Hash(registerDto.PasswordHash),
+                PasswordHash = _passwordHasher.Hash(registerDto.PasswordHash, registerDto.Email),
                 Name = registerDto.Name,
                 ShoppingCarts = new List<models.ShoppingCart>(),
                 Role = Roles.Client
