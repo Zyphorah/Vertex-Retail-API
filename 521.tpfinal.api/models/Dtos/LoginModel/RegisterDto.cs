@@ -13,7 +13,7 @@ namespace _521.tpfinal.api.models.Dtos.LoginModel
 
         [Required(ErrorMessage = "Le mot de passe est requis")]
         [DataType(DataType.Password)]
-        public required string Password { get; set; }
+        public required string PasswordHash { get; set; }
     }
 }
 

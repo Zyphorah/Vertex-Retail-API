@@ -1,6 +1,7 @@
 using _521.tpfinal.api.models.Dtos.User;
 using _521.tpfinal.api.models.Dtos.ShopingCart;
 using _521.tpfinal.api.models.Dtos.CartItem;
+using _521.tpfinal.api.Models.Constance;
 
 namespace _521.tpfinal.api.Services.User
 {
@@ -8,7 +9,7 @@ namespace _521.tpfinal.api.Services.User
     {
         private readonly Repository.User.Interfaces.IUsersRepository _usersRepository = usersRepository;
 
-        public Task Add(CreateUserDto user)
+        private Task Add(CreateUserDto user, string role)
         {
             return this._usersRepository.Add(new models.User
             {
@@ -16,9 +17,14 @@ namespace _521.tpfinal.api.Services.User
                 Name = user.Name,
                 Email = user.Email,
                 PasswordHash = user.PasswordHash,
-                Role = user.Role,
+                Role = role,
                 ShoppingCarts = new List<models.ShoppingCart>()
             });
+        }
+
+        public Task AddAdministrator(CreateUserDto user)
+        {
+            return Add(user, Roles.Admin);
         }
 
         public Task<bool> Delete(UserDto user)
