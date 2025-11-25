@@ -15,8 +15,8 @@ namespace _521.tpfinal.api.Services.Auth
             var users = _usersRepository.GetAll();
             var user = users.FirstOrDefault(u => u.Email == loginDto.Email) ?? throw new Exception("Email ou mot de passe incorrect");
 
-            // Vérifie le mot de passe (simple comparaison pour ce TP)
-            if (user.PasswordHash != loginDto.PasswordHash)
+            // Vérifie le mot de passe avec hash
+            if (!PasswordHasher.Verify(loginDto.PasswordHash, user.PasswordHash))
                 throw new Exception("Email ou mot de passe incorrect");
 
             // Génère le JWT token 
@@ -35,7 +35,7 @@ namespace _521.tpfinal.api.Services.Auth
             {
                 Id = Guid.NewGuid(),
                 Email = registerDto.Email,
-                PasswordHash = registerDto.PasswordHash,
+                PasswordHash = PasswordHasher.Hash(registerDto.PasswordHash),
                 Name = registerDto.Name,
                 ShoppingCarts = new List<models.ShoppingCart>(),
                 Role = Roles.Client

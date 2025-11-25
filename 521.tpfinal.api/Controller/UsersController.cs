@@ -35,6 +35,12 @@ namespace _521.tpfinal.api.Controller
                     return BadRequest(new { error = "Le mot de passe doit contenir au moins 6 caractères" });
                 }
 
+                // Vérifier que le rôle correspond à Admin
+                if (userDto.Role != Roles.Admin)
+                {
+                    return BadRequest(new { error = "Le rôle doit être Admin" });
+                }
+
                 await this._usersService.AddAdministrator(userDto);
                 return StatusCode(201, new { message = "Admin créé avec succès" });
             }

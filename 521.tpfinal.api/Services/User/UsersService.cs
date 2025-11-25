@@ -2,6 +2,7 @@ using _521.tpfinal.api.models.Dtos.User;
 using _521.tpfinal.api.models.Dtos.ShopingCart;
 using _521.tpfinal.api.models.Dtos.CartItem;
 using _521.tpfinal.api.Models.Constance;
+using _521.tpfinal.api.Utils;
 
 namespace _521.tpfinal.api.Services.User
 {
@@ -16,7 +17,7 @@ namespace _521.tpfinal.api.Services.User
                 Id = Guid.NewGuid(),
                 Name = user.Name,
                 Email = user.Email,
-                PasswordHash = user.PasswordHash,
+                PasswordHash = PasswordHasher.Hash(user.PasswordHash),
                 Role = role,
                 ShoppingCarts = new List<models.ShoppingCart>()
             });
@@ -118,7 +119,9 @@ namespace _521.tpfinal.api.Services.User
 
             existingUser.Name = user.Name ?? existingUser.Name;
             existingUser.Email = user.Email ?? existingUser.Email;
-            existingUser.PasswordHash = user.PasswordHash ?? existingUser.PasswordHash;
+            existingUser.PasswordHash = !string.IsNullOrWhiteSpace(user.PasswordHash) 
+                ? PasswordHasher.Hash(user.PasswordHash) 
+                : existingUser.PasswordHash;
             existingUser.Role = user.Role ?? existingUser.Role;
 
             return this._usersRepository.Update(existingUser);
