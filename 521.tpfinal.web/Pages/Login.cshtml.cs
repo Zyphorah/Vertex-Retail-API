@@ -21,7 +21,7 @@ namespace _521.tpfinal.web.Pages
             // Page de connexion simple
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
 
@@ -45,11 +45,11 @@ namespace _521.tpfinal.web.Pages
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadJwtToken(token);
 
-            // Cr�er les "claims" pour le cookie
+            // Créer les "claims" pour le cookie
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, jwtToken.Claims.FirstOrDefault(c => c.Type == "email")?.Value),
-                new Claim(ClaimTypes.Role, jwtToken.Claims.FirstOrDefault(c => c.Type == "role")?.Value),
+                new Claim(ClaimTypes.Name, jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? "Unknown"),
+                new Claim(ClaimTypes.Role, jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value ?? "User"),
                 // IMPORTANT: Stocker le token JWT lui-même dans les claims du cookie
                 // pour pouvoir le réutiliser lors des appels API.
                 new Claim("jwt", token)

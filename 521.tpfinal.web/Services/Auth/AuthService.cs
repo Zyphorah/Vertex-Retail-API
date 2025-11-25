@@ -15,8 +15,8 @@ namespace _521.tpfinal.web.Services.Auth
                     var response = await responseTask;
                     if (response.IsSuccessStatusCode)
                     {
-                        var token = await response.Content.ReadFromJsonAsync<string>();
-                        return (true, token ?? string.Empty);   
+                        var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                        return (true, loginResponse?.Token ?? string.Empty);   
                     }
                     else
                     {

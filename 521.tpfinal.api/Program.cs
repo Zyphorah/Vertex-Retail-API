@@ -34,9 +34,28 @@ builder.Services.AddAuthentication(x =>
 // Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>();
+
+// Enregistrer les repositories
+builder.Services.AddScoped<_521.tpfinal.api.Repository.User.Interfaces.IUsersRepository,
+                           _521.tpfinal.api.Repository.User.DbUsersRepository>();
+builder.Services.AddScoped<_521.tpfinal.api.Repository.Product.Interfaces.IProductsRepository,
+                           _521.tpfinal.api.Repository.Product.DbProductsRepository>();
+builder.Services.AddScoped<_521.tpfinal.api.Repository.ShoppingCart.Interfaces.IShoppingCartRepository,
+                           _521.tpfinal.api.Repository.ShoppingCart.DbShoppingCartRepository>();
+
+// Enregistrer les services
+builder.Services.AddScoped<_521.tpfinal.api.Services.Auth.Interfaces.IAuthService, 
+                           _521.tpfinal.api.Services.Auth.AuthService>();
+builder.Services.AddScoped<_521.tpfinal.api.Services.Product.Interfaces.IProductService,
+                           _521.tpfinal.api.Services.Product.ProductService>();
+builder.Services.AddScoped<_521.tpfinal.api.Services.ShoppingCart.Interfaces.IShoppingCartService,
+                           _521.tpfinal.api.Services.ShoppingCart.ShoppingCartService>();
+builder.Services.AddScoped<_521.tpfinal.api.Services.User.Interfaces.IUsersService,
+                           _521.tpfinal.api.Services.User.UsersService>();
+
+builder.Services.AddOpenApi();
 
 builder.Services.AddSingleton<PasswordHasher>();
 
