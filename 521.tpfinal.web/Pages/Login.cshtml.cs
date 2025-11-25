@@ -8,17 +8,12 @@ using System.Security.Claims;
 
 namespace _521.tpfinal.web.Pages
 {
-    public class LoginModel : PageModel
+    public class LoginModel(IApiService apiService) : PageModel
     {
-        private readonly IApiService _apiService;
+        private readonly IApiService _apiService = apiService;
 
         [BindProperty]
-        public Models.LoginModel Input { get; set; }
-
-        public LoginModel(IApiService apiService)
-        {
-            _apiService = apiService;
-        }
+        public required Models.Login Input { get; set; }
 
         public void OnGet()
         {
@@ -33,7 +28,7 @@ namespace _521.tpfinal.web.Pages
             {
                 return Page();
             }
-
+            
             // 1. Appeler l'API pour tenter de se connecter
             var (success, token) = await _apiService.LoginAsync(Input);
 
@@ -43,19 +38,19 @@ namespace _521.tpfinal.web.Pages
                 return Page();
             }
 
-            // 2. Le token JWT a été reçu. Maintenant, on crée le cookie d'authentification.
+            // 2. Le token JWT a Ã©tÃ© reÃ§u. Maintenant, on crÃ©e le cookie d'authentification.
 
             // Lire le token pour en extraire les claims (infos de l'usager)
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadJwtToken(token);
 
-            // Créer les "claims" pour le cookie
+            // Crï¿½er les "claims" pour le cookie
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, jwtToken.Claims.FirstOrDefault(c => c.Type == "email")?.Value),
                 new Claim(ClaimTypes.Role, jwtToken.Claims.FirstOrDefault(c => c.Type == "role")?.Value),
-                // IMPORTANT: Stocker le token JWT lui-même dans les claims du cookie
-                // pour pouvoir le réutiliser lors des appels API.
+                // IMPORTANT: Stocker le token JWT lui-mÃªme dans les claims du cookie
+                // pour pouvoir le rÃ©utiliser lors des appels API.
                 new Claim("jwt", token)
             };
 
@@ -64,12 +59,12 @@ namespace _521.tpfinal.web.Pages
 
             var authProperties = new AuthenticationProperties
             {
-                // Gérer la persistance du cookie
+                // GÃ©rer la persistance du cookie
                 IsPersistent = true,
                 ExpiresUtc = jwtToken.ValidTo
             };
 
-            // 3. Connecter l'usager (créer le cookie)
+            // 3. Connecter l'usager (crÃ©er le cookie)
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity),

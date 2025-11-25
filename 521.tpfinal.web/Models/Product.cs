@@ -1,4 +1,4 @@
-namespace _521.tpfinal.api.models
+namespace _521.tpfinal.web.Models
 {
     public class Product
     {
