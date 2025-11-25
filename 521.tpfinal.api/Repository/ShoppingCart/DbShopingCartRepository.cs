@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace _521.tpfinal.api.Repository.ShoppingCart
 {
     public class DbShoppingCartRepository(models.AppDbContext context) : Interfaces.IShoppingCartRepository
@@ -48,14 +50,14 @@ namespace _521.tpfinal.api.Repository.ShoppingCart
 
         public Task<models.ShoppingCart?> GetCartByUserId(Guid userId)
         {
-            var existingCart = this._context.ShoppingCarts.FirstOrDefault(c => c.UserId == userId) ?? throw new Exception($"Panier pour l'utilisateur avec l'ID {userId} non trouvé");
+            var existingCart = this._context.ShoppingCarts.Include(c => c.CartItems).ThenInclude(ci => ci.Product).FirstOrDefault(c => c.UserId == userId) ?? throw new Exception($"Panier pour l'utilisateur avec l'ID {userId} non trouvé");
             return Task.FromResult<models.ShoppingCart?>(existingCart);
         }
 
         public Task<List<models.CartItem>> GetCartItems(Guid cartId)
         {
             var existingCart = this._context.ShoppingCarts.FirstOrDefault(c => c.Id == cartId) ?? throw new Exception($"Panier avec l'ID {cartId} non trouvé");
-            return Task.FromResult(this._context.CartItems.Where(i => i.ShoppingCartId == cartId).ToList());    
+            return Task.FromResult(this._context.CartItems.Include(i => i.Product).Where(i => i.ShoppingCartId == cartId).ToList());    
         }
 
         public Task<bool> RemoveItemFromCart(Guid cartItemId)

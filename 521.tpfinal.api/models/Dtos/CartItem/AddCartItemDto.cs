@@ -4,6 +4,8 @@ namespace _521.tpfinal.api.models.Dtos.CartItem
 {
     public class AddCartItemDto
     {
+        [Required(ErrorMessage = "L'identifiant du panier est requis")]
+        required public Guid ShoppingCartId { get; set; }
         [Required(ErrorMessage = "L'identifiant du produit est requis")]
         required public Guid ProductId { get; set; }
         [Required(ErrorMessage = "La quantité est requise")]

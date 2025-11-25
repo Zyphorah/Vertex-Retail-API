@@ -8,49 +8,98 @@ namespace _521.tpfinal.api.Services.ShoppingCart
     {
         private readonly IShoppingCartRepository _shoppingCartRepository = shoppingCartRepository;
 
-        public Task Add(ShoppingCartDto cart)
+        public async Task Add(ShoppingCartDto cart)
         {
-            throw new NotImplementedException();
+            await this._shoppingCartRepository.Add(new models.ShoppingCart
+            {
+                Id = cart.Id,
+                UserId = cart.UserId,
+                TotalPrice = cart.TotalPrice,
+                User = null!,
+                CartItems = new List<models.CartItem>()
+            });
         }
 
-        public Task AddItemToCart(AddCartItemDto item)
+        public async Task AddItemToCart(AddCartItemDto item)
         {
-            throw new NotImplementedException();
+            await this._shoppingCartRepository.AddItemToCart(new models.CartItem
+            {
+                Id = Guid.NewGuid(),
+                ShoppingCartId = item.ShoppingCartId,
+                ProductId = item.ProductId,
+                Quantity = item.Quantity,
+                UnitPrice = 0, // À récupérer du produit
+                Product = null!,
+                ShoppingCart = null!
+            });
         }
 
-        public Task<bool> CheckStockAvailable(Guid productId, int quantity)
+        public async Task<bool> CheckStockAvailable(Guid productId, int quantity)
         {
-            throw new NotImplementedException();
+            return await this._shoppingCartRepository.CheckStockAvailable(productId, quantity);
         }
 
-        public Task ClearCart(Guid cartId)
+        public async Task ClearCart(Guid cartId)
         {
-            throw new NotImplementedException();
+            await this._shoppingCartRepository.ClearCart(cartId);
         }
 
-        public Task<bool> Delete(ShoppingCartDto cart)
+        public async Task<bool> Delete(ShoppingCartDto cart)
         {
-            throw new NotImplementedException();
+            return await this._shoppingCartRepository.Delete(new models.ShoppingCart
+            {
+                Id = cart.Id,
+                UserId = cart.UserId,
+                TotalPrice = cart.TotalPrice,
+                User = null!,
+                CartItems = new List<models.CartItem>()
+            });
         }
 
-        public Task<ShoppingCartDto?> GetCartByUserId(Guid userId)
+        public async Task<ShoppingCartDto?> GetCartByUserId(Guid userId)
         {
-            throw new NotImplementedException();
+            var cart = await this._shoppingCartRepository.GetCartByUserId(userId);
+            if (cart == null) return null;
+
+            return new ShoppingCartDto
+            {
+                Id = cart.Id,
+                UserId = cart.UserId,
+                TotalPrice = cart.TotalPrice,
+                Items = cart.CartItems.Select(ci => new CartItemDto
+                {
+                    ShoppingCartId = ci.ShoppingCartId,
+                    ProductId = ci.ProductId,
+                    ProductName = ci.Product.Name,
+                    ProductPrice = ci.UnitPrice,
+                    Quantity = ci.Quantity,
+                    SubTotal = ci.Quantity * ci.UnitPrice
+                }).ToList()
+            };
         }
 
-        public Task<List<CartItemDto>> GetCartItems(Guid cartId)
+        public async Task<List<CartItemDto>> GetCartItems(Guid cartId)
         {
-            throw new NotImplementedException();
+            var items = await this._shoppingCartRepository.GetCartItems(cartId);
+            return items.Select(ci => new CartItemDto
+            {
+                ShoppingCartId = ci.ShoppingCartId,
+                ProductId = ci.ProductId,
+                ProductName = ci.Product.Name,
+                ProductPrice = ci.UnitPrice,
+                Quantity = ci.Quantity,
+                SubTotal = ci.Quantity * ci.UnitPrice
+            }).ToList();
         }
 
-        public Task<bool> RemoveItemFromCart(Guid cartItemId)
+        public async Task<bool> RemoveItemFromCart(Guid cartItemId)
         {
-            throw new NotImplementedException();
+            return await this._shoppingCartRepository.RemoveItemFromCart(cartItemId);
         }
 
-        public Task<bool> UpdateItemQuantity(Guid cartItemId, int newQuantity)
+        public async Task<bool> UpdateItemQuantity(Guid cartItemId, int newQuantity)
         {
-            throw new NotImplementedException();
+            return await this._shoppingCartRepository.UpdateItemQuantity(cartItemId, newQuantity);
         }
     }
 }
