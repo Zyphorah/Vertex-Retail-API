@@ -1,12 +1,8 @@
-using _521.tpfinal.api.models;
-using _521.tpfinal.api.Repository.User.Interfaces;
-
 namespace _521.tpfinal.api.Repository.User
 {
-    public class DbUsersRepository(AppDbContext context) : IUsersRepository
+    public class DbUsersRepository(models.AppDbContext context) : Interfaces.IUsersRepository
     {
-        private readonly AppDbContext _context = context;
-
+        private readonly models.AppDbContext _context = context;
         public Task Add(models.User user)
         {
             // Vérifier que l'ID n'existe pas déjà en BD

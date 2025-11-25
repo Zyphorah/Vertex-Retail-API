@@ -1,15 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
 
-[ApiController]
-[Route("api/[controller]")]
-public class AuthController : ControllerBase
+
+namespace _521.tpfinal.api.Controller
 {
-    private readonly IUsersRepository _usersRepository;
-
-    public AuthController(IUsersRepository usersRepository)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AuthController : ControllerBase
     {
-        _usersRepository = usersRepository;
-    }
+        private readonly IUsersRepository _usersRepository;
 
-   
+        public AuthController(IUsersRepository usersRepository)
+        {
+            _usersRepository = usersRepository;
+        }
+
+    
+    }
 }

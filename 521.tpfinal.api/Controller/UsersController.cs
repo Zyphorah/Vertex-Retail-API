@@ -1,15 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 
-[ApiController]
-[Route("api/[controller]")]
-
-public class UsersController : ControllerBase
-{
-    private readonly IUsersRepository _usersRepository;
-
-    public UsersController(IUsersRepository usersRepository)
+namespace _521.tpfinal.api.Controller
+{   
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UsersController : ControllerBase
     {
-        _usersRepository = usersRepository;
-    }
+        private readonly IUsersRepository _usersRepository;
 
+        public UsersController(IUsersRepository usersRepository)
+        {
+            _usersRepository = usersRepository;
+        }
+
+    }
 }

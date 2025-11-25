@@ -1,14 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 
-[ApiController]
-[Route("api/[controller]")]
-public class CartController : ControllerBase
+namespace _521.tpfinal.api.Controller
 {
-    private readonly IDbShoppingCartRepository _shoppingCartRepository;
-
-    public CartController(IDbShoppingCartRepository shoppingCartRepository)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class CartController : ControllerBase
     {
-        _shoppingCartRepository = shoppingCartRepository;
-    }
+        private readonly IDbShoppingCartRepository _shoppingCartRepository;
 
+        public CartController(IDbShoppingCartRepository shoppingCartRepository)
+        {
+            _shoppingCartRepository = shoppingCartRepository;
+        }
+
+    }
 }

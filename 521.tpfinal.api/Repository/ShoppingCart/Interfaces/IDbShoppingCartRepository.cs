@@ -1,5 +1,3 @@
-using _521.tpfinal.api.models;
-
 namespace _521.tpfinal.api.Repository.ShoppingCart.Interfaces
 {
     public interface IDbShoppingCartRepository

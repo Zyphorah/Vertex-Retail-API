@@ -1,11 +1,8 @@
-using _521.tpfinal.api.models;
-using _521.tpfinal.api.Repository.Product.Interfaces;
-
 namespace _521.tpfinal.api.Repository.Product
 {
-    public class DbProductsRepository(AppDbContext context) : IDbProductsRepository
+    public class DbProductsRepository(models.AppDbContext context) : Interfaces.IDbProductsRepository
     {
-        private readonly AppDbContext _context = context;
+        private readonly models.AppDbContext _context = context;
 
         public Task Add(models.Product product)
         {   
