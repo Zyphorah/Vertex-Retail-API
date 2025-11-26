@@ -10,6 +10,6 @@ namespace _521.tpfinal.web.Models
         public required int Stock { get; set; }
         
         // Un produit peut avoir plusieurs CartItems donc une liste de plusieurs instance de même produit
-        public required List<CartItem> CartItems { get; set; }
+        public List<CartItem> CartItems { get; set; } = [];
     }
 }

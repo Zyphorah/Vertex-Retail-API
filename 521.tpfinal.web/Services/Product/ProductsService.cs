@@ -9,7 +9,19 @@ namespace _521.tpfinal.web.Services.Product
         {
             this._httpClient.DefaultRequestHeaders.Clear();
             this._httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-            return this._httpClient.PostAsJsonAsync("api/products", product)
+            
+            // Créer un objet anonyme avec seulement les champs nécessaires (sans CartItems)
+            var productData = new
+            {
+                product.Id,
+                product.Name,
+                product.Description,
+                product.Price,
+                product.Category,
+                product.Stock
+            };
+            
+            return this._httpClient.PostAsJsonAsync("api/products", productData)
                 .ContinueWith(async responseTask =>
                 {
                     var response = await responseTask;
@@ -19,7 +31,8 @@ namespace _521.tpfinal.web.Services.Product
                     }
                     else
                     {
-                        return (false, $"Failed to add product: {response.ReasonPhrase}");
+                        var errorContent = await response.Content.ReadAsStringAsync();
+                        return (false, $"Failed to add product: {response.ReasonPhrase} - {errorContent}");
                     }
                 }).Unwrap();
         }
@@ -91,14 +104,25 @@ namespace _521.tpfinal.web.Services.Product
             this._httpClient.DefaultRequestHeaders.Clear();
             this._httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             
-            var response = await this._httpClient.PutAsJsonAsync($"api/products/{id}", product);
+            var productData = new
+            {
+                product.Id,
+                product.Name,
+                product.Description,
+                product.Price,
+                product.Category,
+                product.Stock
+            };
+            
+            var response = await this._httpClient.PutAsJsonAsync($"api/products/{id}", productData);
             if (response.IsSuccessStatusCode)
             {
                 return (true, "Product updated successfully.");
             }
             else
             {
-                return (false, $"Failed to update product: {response.ReasonPhrase}");
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return (false, $"Failed to update product: {response.ReasonPhrase} - {errorContent}");
             }
         }
     }

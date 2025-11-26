@@ -22,7 +22,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-page="/Index">Accueil</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Products">Produits</a>
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Products/Products">Produits</a>
                         </li>
 
                         @if (User?.Identity?.IsAuthenticated == true)
@@ -48,7 +48,7 @@
                             </li>
                             <li class="nav-item">
                                 <!-- La page Logout doit être un POST pour la sécurité -->
-                                <form asp-page="/Logout" method="post" class="form-inline">
+                                <form asp-page="/Auth/Logout" method="post" class="form-inline">
                                     <button type="submit" class="nav-link btn btn-link text-dark">Déconnexion</button>
                                 </form>
                             </li>
@@ -56,10 +56,10 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/Register">S'inscrire</a>
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Auth/Register">S'inscrire</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/Login">Connexion</a>
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Auth/Login">Connexion</a>
                             </li>
                         }
                     </ul>

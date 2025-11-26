@@ -48,11 +48,11 @@ namespace _521.tpfinal.web.Pages
             // Créer les "claims" pour le cookie
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? "Unknown"),
-                new Claim(ClaimTypes.Role, jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value ?? "User"),
+                new(ClaimTypes.Name, jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? "Unknown"),
+                new(ClaimTypes.Role, jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value ?? "User"),
                 // IMPORTANT: Stocker le token JWT lui-même dans les claims du cookie
                 // pour pouvoir le réutiliser lors des appels API.
-                new Claim("jwt", token)
+                new("jwt", token)
             };
 
             var claimsIdentity = new ClaimsIdentity(

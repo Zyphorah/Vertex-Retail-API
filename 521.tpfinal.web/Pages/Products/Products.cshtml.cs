@@ -18,9 +18,18 @@ namespace _521.tpfinal.web.Pages
 
         public async Task<IActionResult> OnGetAsync()
         {
-            // Appel public, pas besoin d'authentification
-            Products = await _apiService.GetAllAsync();
-            return Page();
+            try
+            {
+                // Appel public, pas besoin d'authentification
+                Products = await _apiService.GetAllAsync();
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erreur: {ex.Message}");
+                Products = new List<Product>();
+                return Page();
+            }
         }
 
         public async Task<IActionResult> OnPostAddToCartAsync(int productId)
