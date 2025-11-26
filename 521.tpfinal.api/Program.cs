@@ -61,6 +61,14 @@ builder.Services.AddSingleton<PasswordHasher>();
 
 var app = builder.Build();
 
+// Initialiser l'administrateur au démarrage
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var passwordHasher = scope.ServiceProvider.GetRequiredService<PasswordHasher>();
+    AdminInitializer.Initialize(context, passwordHasher);
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
