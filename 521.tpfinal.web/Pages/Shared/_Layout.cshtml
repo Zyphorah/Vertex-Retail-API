@@ -25,14 +25,14 @@
                             <a class="nav-link text-dark" asp-area="" asp-page="/Products">Produits</a>
                         </li>
 
-                        @if (User.Identity.IsAuthenticated)
+                        @if (User?.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-page="/Cart">Mon Panier</a>
                             </li>
 
                             // Afficher le lien Admin seulement si l'usager a le rôle "Admin"
-                            @if (User.IsInRole("Admin"))
+                            @if (User?.IsInRole("Admin") == true)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-danger" asp-area="" asp-page="/Admin/Index">Zone Admin</a>
@@ -41,10 +41,10 @@
                         }
                     </ul>
                     <ul class="navbar-nav">
-                        @if (User.Identity.IsAuthenticated)
+                        @if (User?.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
-                                <span class="navbar-text">Bonjour, @User.Identity.Name!</span>
+                                <span class="navbar-text">Bonjour, @User?.Identity?.Name!</span>
                             </li>
                             <li class="nav-item">
                                 <!-- La page Logout doit être un POST pour la sécurité -->
