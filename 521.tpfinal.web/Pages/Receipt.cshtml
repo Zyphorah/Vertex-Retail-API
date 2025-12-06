@@ -39,16 +39,16 @@
                                 {
                                     <tr>
                                         <td>@item.ProductName</td>
-                                        <td>@item.UnitPrice.ToString("C")</td>
+                                        <td>@item.UnitPrice.ToString("C", new System.Globalization.CultureInfo("en-CA"))</td>
                                         <td>@item.Quantity</td>
-                                        <td>@item.Subtotal.ToString("C")</td>
+                                        <td>@item.Subtotal.ToString("C", new System.Globalization.CultureInfo("en-CA"))</td>
                                     </tr>
                                 }
                             </tbody>
                             <tfoot>
                                 <tr class="table-primary">
                                     <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                    <td><strong>@Model.Receipt.TotalAmount.ToString("C")</strong></td>
+                                    <td><strong>@Model.Receipt.TotalAmount.ToString("C", new System.Globalization.CultureInfo("en-CA"))</strong></td>
                                 </tr>
                             </tfoot>
                         </table>

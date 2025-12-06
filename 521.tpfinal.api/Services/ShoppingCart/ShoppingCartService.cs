@@ -67,21 +67,23 @@ namespace _521.tpfinal.api.Services.ShoppingCart
             var cart = await this._shoppingCartRepository.GetCartByUserId(userId);
             if (cart == null) return null;
 
+            var cartItems = cart.CartItems.Select(ci => new CartItemDto
+            {
+                Id = ci.Id,
+                ShoppingCartId = ci.ShoppingCartId,
+                ProductId = ci.ProductId,
+                ProductName = ci.Product?.Name ?? "Produit inconnu",
+                ProductPrice = ci.UnitPrice,
+                Quantity = ci.Quantity,
+                SubTotal = ci.Quantity * ci.UnitPrice
+            }).ToList();
+
             return new ShoppingCartDto
             {
                 Id = cart.Id,
                 UserId = cart.UserId,
-                TotalPrice = cart.TotalPrice,
-                Items = [.. cart.CartItems.Select(ci => new CartItemDto
-                {
-                    Id = ci.Id,
-                    ShoppingCartId = ci.ShoppingCartId,
-                    ProductId = ci.ProductId,
-                    ProductName = ci.Product?.Name ?? "Produit inconnu",
-                    ProductPrice = ci.UnitPrice,
-                    Quantity = ci.Quantity,
-                    SubTotal = ci.Quantity * ci.UnitPrice
-                })]
+                TotalPrice = cartItems.Sum(item => item.SubTotal),
+                Items = cartItems
             };
         }
 

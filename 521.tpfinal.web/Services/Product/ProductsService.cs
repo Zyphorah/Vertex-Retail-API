@@ -64,7 +64,7 @@ namespace _521.tpfinal.web.Services.Product
                     var content = await response.Content.ReadAsStringAsync();
                     var products = System.Text.Json.JsonSerializer.Deserialize<List<Models.Product>>(content,
                         new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                    return products ?? new List<Models.Product>();
+                    return products ?? [];
                 }
                 else
                 {

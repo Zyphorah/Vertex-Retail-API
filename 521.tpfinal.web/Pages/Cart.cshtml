@@ -48,9 +48,9 @@
                     {
                         <tr>
                             <td>@item.ProductName</td>
-                            <td>@item.ProductPrice.ToString("C")</td>
+                            <td>@item.ProductPrice.ToString("C", new System.Globalization.CultureInfo("en-CA"))</td>
                             <td>@item.Quantity</td>
-                            <td><strong>@item.SubTotal.ToString("C")</strong></td>
+                            <td><strong>@item.SubTotal.ToString("C", new System.Globalization.CultureInfo("en-CA"))</strong></td>
                             <td>
                                 <form method="post" asp-page-handler="RemoveItem" 
                                       onsubmit="return confirm('Retirer cet article du panier?');">
@@ -66,7 +66,7 @@
                 <tfoot>
                     <tr class="table-primary">
                         <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                        <td><strong>@Model.CartResponse.TotalPrice.ToString("C")</strong></td>
+                        <td><strong>@Model.CartResponse.TotalPrice.ToString("C", new System.Globalization.CultureInfo("en-CA"))</strong></td>
                         <td></td>
                     </tr>
                 </tfoot>
