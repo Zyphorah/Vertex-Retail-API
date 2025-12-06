@@ -12,11 +12,18 @@ namespace _521.tpfinal.api.Controller
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] string? category = null)
         {
             try
             {
                 var products = await this._productService.GetAll();
+                
+                // Filtrer par catégorie si spécifiée
+                if (!string.IsNullOrWhiteSpace(category))
+                {
+                    products = products.Where(p => p.Category.Equals(category, StringComparison.OrdinalIgnoreCase)).ToList();
+                }
+                
                 return Ok(products);
             }
             catch (Exception ex)
