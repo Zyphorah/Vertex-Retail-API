@@ -19,11 +19,20 @@ namespace _521.tpfinal.api.Repository.Product
             return this._context.SaveChangesAsync();
         }
 
-        public Task<bool> Delete(ProductModel product)
+        public async Task<bool> Delete(ProductModel product)
         {
             var existingProduct = this._context.Products.FirstOrDefault(p => p.Id == product.Id) ?? throw new Exception($"Produit avec l'ID {product.Id} non trouvé");
+            
+            // Supprimer d'abord tous les CartItems associés au produit
+            var cartItemsToDelete = this._context.CartItems.Where(c => c.ProductId == product.Id).ToList();
+            foreach (var cartItem in cartItemsToDelete)
+            {
+                this._context.CartItems.Remove(cartItem);
+            }
+            
             this._context.Products.Remove(existingProduct);
-            return Task.FromResult(this._context.SaveChanges() > 0);
+            var result = await this._context.SaveChangesAsync();
+            return result > 0;
         }
 
         public Task<List<ProductModel>> GetAll()

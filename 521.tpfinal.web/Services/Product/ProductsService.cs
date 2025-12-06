@@ -49,7 +49,8 @@ namespace _521.tpfinal.web.Services.Product
             }
             else
             {
-                return (false, $"Failed to delete product: {response.ReasonPhrase}");
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return (false, $"Failed to delete product: {response.ReasonPhrase} - {errorContent}");
             }
         }
 
