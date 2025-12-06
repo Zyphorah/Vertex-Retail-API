@@ -27,9 +27,12 @@
 
                         @if (User?.Identity?.IsAuthenticated == true)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/Cart">Mon Panier</a>
-                            </li>
+                            @if (User?.IsInRole("Client") == true)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/Cart">Mon Panier</a>
+                                </li>
+                            }
 
                             // Afficher le lien Admin seulement si l'usager a le rôle "Admin"
                             @if (User?.IsInRole("Admin") == true)

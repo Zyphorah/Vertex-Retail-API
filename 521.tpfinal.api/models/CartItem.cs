@@ -13,7 +13,7 @@ namespace _521.tpfinal.api.models
         public required decimal UnitPrice { get; set; }
 
         // Navigation des propriétés
-        public required Product Product { get; set; }
-        public required ShoppingCart ShoppingCart { get; set; }
+        public Product? Product { get; set; }
+        public ShoppingCart? ShoppingCart { get; set; }
     }
 }

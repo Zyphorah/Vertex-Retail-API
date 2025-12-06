@@ -7,7 +7,7 @@ namespace _521.tpfinal.api.models
         public required Guid UserId { get; set; }
         public required decimal TotalPrice { get; set; }
 
-        public required User User { get; set; }
-        public required List<CartItem> CartItems { get; set; }
+        public User? User { get; set; }
+        public List<CartItem> CartItems { get; set; } = [];
     }
 }

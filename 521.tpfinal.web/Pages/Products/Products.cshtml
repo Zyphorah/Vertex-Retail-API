@@ -6,6 +6,22 @@
 
 <h1>Catalogue des Produits</h1>
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <!-- (À ajouter par l'étudiant) : Filtre par catégorie -->
 @if (User.IsInRole("Admin"))
 {
@@ -23,13 +39,28 @@
                     <h5 class="card-title">@product.Name</h5>
                     <p class="card-text">@product.Description</p>
                     <p class="card-text"><strong>@product.Price.ToString("C")</strong></p>
-                    <p class="card-text"><small class="text-muted">@product.Category</small></p>
+                    <p class="card-text"><small class="text-muted">Catégorie: @product.Category</small></p>
+                    <p class="card-text"><small class="text-muted">Stock: @product.Stock</small></p>
 
-                    <a href="#" class="btn btn-secondary">Voir détails</a>
-
-                    @if (User?.Identity?.IsAuthenticated == true)
+                    @if (User?.IsInRole("Admin") == true)
                     {
-                        <!-- (À implémenter par l'étudiant) : Formulaire pour ajouter au panier -->
+                        <!-- Options Admin: Modifier et Supprimer -->
+                        <div class="mt-2">
+                            <a asp-page="/Admin/EditProduct" asp-route-id="@product.Id" class="btn btn-warning btn-sm">
+                                <i class="bi bi-pencil"></i> Modifier
+                            </a>
+                            <form method="post" asp-page-handler="DeleteProduct" class="d-inline" 
+                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce produit?');">
+                                <input type="hidden" name="productId" value="@product.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash"></i> Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else if (User?.Identity?.IsAuthenticated == true && User.IsInRole("Client"))
+                    {
+                        <!-- Client: Ajouter au panier -->
                         <form method="post" asp-page-handler="AddToCart" class="d-inline">
                             <input type="hidden" name="productId" value="@product.Id" />
                             <button type="submit" class="btn btn-success">Ajouter au panier</button>

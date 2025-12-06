@@ -32,15 +32,32 @@ namespace _521.tpfinal.api.Services.Auth
 
         public Task<RegisterResponseDto> Register(RegisterDto registerDto)
         {
-            this._usersRepository.Add(new models.User
+            var userId = Guid.NewGuid();
+            var cartId = Guid.NewGuid();
+            
+            // Créer l'utilisateur avec un panier vide
+            var newUser = new models.User
             {
-                Id = Guid.NewGuid(),
+                Id = userId,
                 Email = registerDto.Email,
                 PasswordHash = _passwordHasher.Hash(registerDto.PasswordHash, registerDto.Email),
                 Name = registerDto.Name,
-                ShoppingCarts = new List<models.ShoppingCart>(),
-                Role = Roles.Client
-            });
+                Role = Roles.Client,
+                ShoppingCarts = new List<models.ShoppingCart>
+                {
+                    new models.ShoppingCart
+                    {
+                        Id = cartId,
+                        UserId = userId,
+                        TotalPrice = 0,
+                        User = null!,
+                        CartItems = new List<models.CartItem>()
+                    }
+                }
+            };
+            
+            this._usersRepository.Add(newUser);
+            
             return Task.FromResult(new RegisterResponseDto
             {
                 Message = "Utilisateur créé avec succès"

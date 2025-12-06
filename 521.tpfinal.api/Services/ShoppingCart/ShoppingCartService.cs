@@ -1,12 +1,14 @@
 using _521.tpfinal.api.models.Dtos.CartItem;
 using _521.tpfinal.api.models.Dtos.ShopingCart;
 using _521.tpfinal.api.Repository.ShoppingCart.Interfaces;
+using _521.tpfinal.api.Repository.Product.Interfaces;
 
 namespace _521.tpfinal.api.Services.ShoppingCart
 {
-    public class ShoppingCartService(IShoppingCartRepository shoppingCartRepository) : Interfaces.IShoppingCartService
+    public class ShoppingCartService(IShoppingCartRepository shoppingCartRepository, IProductsRepository productsRepository) : Interfaces.IShoppingCartService
     {
         private readonly IShoppingCartRepository _shoppingCartRepository = shoppingCartRepository;
+        private readonly IProductsRepository _productsRepository = productsRepository;
 
         public async Task Add(ShoppingCartDto cart)
         {
@@ -22,13 +24,17 @@ namespace _521.tpfinal.api.Services.ShoppingCart
 
         public async Task AddItemToCart(AddCartItemDto item)
         {
+            // Récupérer le prix du produit
+            var product = await _productsRepository.GetById(item.ProductId) 
+                ?? throw new Exception($"Produit avec l'ID {item.ProductId} non trouvé");
+            
             await this._shoppingCartRepository.AddItemToCart(new models.CartItem
             {
                 Id = Guid.NewGuid(),
                 ShoppingCartId = item.ShoppingCartId,
                 ProductId = item.ProductId,
                 Quantity = item.Quantity,
-                UnitPrice = 0, // À récupérer du produit
+                UnitPrice = product.Price,
                 Product = null!,
                 ShoppingCart = null!
             });
@@ -68,9 +74,10 @@ namespace _521.tpfinal.api.Services.ShoppingCart
                 TotalPrice = cart.TotalPrice,
                 Items = [.. cart.CartItems.Select(ci => new CartItemDto
                 {
+                    Id = ci.Id,
                     ShoppingCartId = ci.ShoppingCartId,
                     ProductId = ci.ProductId,
-                    ProductName = ci.Product.Name,
+                    ProductName = ci.Product?.Name ?? "Produit inconnu",
                     ProductPrice = ci.UnitPrice,
                     Quantity = ci.Quantity,
                     SubTotal = ci.Quantity * ci.UnitPrice
@@ -83,9 +90,10 @@ namespace _521.tpfinal.api.Services.ShoppingCart
             var items = await this._shoppingCartRepository.GetCartItems(cartId);
             return [.. items.Select(ci => new CartItemDto
             {
+                Id = ci.Id,
                 ShoppingCartId = ci.ShoppingCartId,
                 ProductId = ci.ProductId,
-                ProductName = ci.Product.Name,
+                ProductName = ci.Product?.Name ?? "Produit inconnu",
                 ProductPrice = ci.UnitPrice,
                 Quantity = ci.Quantity,
                 SubTotal = ci.Quantity * ci.UnitPrice

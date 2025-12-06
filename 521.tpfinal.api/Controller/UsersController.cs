@@ -20,6 +20,21 @@ namespace _521.tpfinal.api.Controller
         }
 
         [Authorize(Roles = Roles.Admin)]
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            try
+            {
+                var users = this._usersService.GetAll();
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost("admin")]
         public async Task<IActionResult> CreateAdmin(models.Dtos.User.CreateUserDto userDto)
         {
@@ -103,7 +118,11 @@ namespace _521.tpfinal.api.Controller
                     return NotFound(new { error = "Usager non trouvé" });
                 }
 
-                await this._usersService.Delete(user);
+                var success = await this._usersService.Delete(user);
+                if (!success)
+                {
+                    return BadRequest(new { error = "Échec de la suppression de l'utilisateur" });
+                }
                 return Ok(new { message = "Usager supprimé avec succès" });
             }
             catch (Exception ex)

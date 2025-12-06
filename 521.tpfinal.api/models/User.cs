@@ -9,6 +9,6 @@ namespace _521.tpfinal.api.models
         public required string PasswordHash { get; set; }
         public required string Role { get; set; }
 
-        public required List<ShoppingCart> ShoppingCarts { get; set; }
+        public List<ShoppingCart> ShoppingCarts { get; set; } = [];
     }
 }

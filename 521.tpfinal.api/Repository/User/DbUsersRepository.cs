@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace _521.tpfinal.api.Repository.User
 {
     public class DbUsersRepository(models.AppDbContext context) : Interfaces.IUsersRepository
@@ -32,7 +34,11 @@ namespace _521.tpfinal.api.Repository.User
 
         public List<models.User> GetAll()
         {
-            return this._context.Users.ToList();
+            return this._context.Users
+                .Include(u => u.ShoppingCarts)
+                .ThenInclude(sc => sc.CartItems)
+                .ThenInclude(ci => ci.Product)
+                .ToList();
         }
 
         public models.User? GetById(Guid id)
@@ -42,8 +48,13 @@ namespace _521.tpfinal.api.Repository.User
                 throw new ArgumentException("L'ID ne peut pas être vide");
             }
 
-            var existingUser = this._context.Users.FirstOrDefault(u => u.Id == id) ?? throw new Exception($"Utilisateur avec l'ID {id} non trouvé");
-                return existingUser;
+            var existingUser = this._context.Users
+                .Include(u => u.ShoppingCarts)
+                .ThenInclude(sc => sc.CartItems)
+                .ThenInclude(ci => ci.Product)
+                .FirstOrDefault(u => u.Id == id);
+            
+            return existingUser;
         }
 
         public Task<bool> Update(models.User user)

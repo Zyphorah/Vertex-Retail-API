@@ -1,0 +1,84 @@
+@page
+@model _521.tpfinal.web.Pages.ReceiptModel
+@{
+    ViewData["Title"] = "Reçu de commande";
+}
+
+<div class="container mt-4">
+    @if (Model.Receipt != null)
+    {
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h2><i class="bi bi-check-circle"></i> Commande confirmée!</h2>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Détails de la commande</h5>
+                        <p><strong>Numéro de commande:</strong> @Model.Receipt.OrderId</p>
+                        <p><strong>Date:</strong> @Model.Receipt.OrderDate.ToString("dd MMMM yyyy à HH:mm")</p>
+                        <p><strong>Statut:</strong> <span class="badge bg-success">@Model.Receipt.Status</span></p>
+                    </div>
+                </div>
+
+                @if (Model.Receipt.Items != null && Model.Receipt.Items.Any())
+                {
+                    <h5>Articles commandés</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Prix unitaire</th>
+                                    <th>Quantité</th>
+                                    <th>Sous-total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Receipt.Items)
+                                {
+                                    <tr>
+                                        <td>@item.ProductName</td>
+                                        <td>@item.UnitPrice.ToString("C")</td>
+                                        <td>@item.Quantity</td>
+                                        <td>@item.Subtotal.ToString("C")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-primary">
+                                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                    <td><strong>@Model.Receipt.TotalAmount.ToString("C")</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.Receipt.Message))
+                {
+                    <div class="alert alert-info mt-3">
+                        @Model.Receipt.Message
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a asp-page="/Products/Products" class="btn btn-primary">
+                <i class="bi bi-shop"></i> Continuer les achats
+            </a>
+            <button onclick="window.print();" class="btn btn-outline-secondary ms-2">
+                <i class="bi bi-printer"></i> Imprimer le reçu
+            </button>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">
+            <h4>Aucun reçu disponible</h4>
+            <p>Le reçu n'est plus disponible. Veuillez retourner à votre panier.</p>
+            <a asp-page="/Cart" class="btn btn-primary">Voir mon panier</a>
+        </div>
+    }
+</div>

@@ -2,18 +2,12 @@ namespace _521.tpfinal.web.Models
 {
     public class CartItem
     {
-        public required Guid Id { get; set; }
-        // Foreign keys
-        public required Guid ProductId { get; set; }
-        public required Guid ShoppingCartId { get; set; }
-
-        // Utilisée comme historique du prix au moment de l'ajout au panier 
-        // (pour éviter que le prix change plus tard n'affecte les anciens items dans le panier)
-        public required int Quantity { get; set; }
-        public required decimal UnitPrice { get; set; }
-
-        // Navigation des propriétés
-        public required Product Product { get; set; }
-        public required ShoppingCart ShoppingCart { get; set; }
+        public Guid Id { get; set; }
+        public Guid ShoppingCartId { get; set; }
+        public Guid ProductId { get; set; }
+        public string ProductName { get; set; } = string.Empty;
+        public decimal ProductPrice { get; set; }
+        public int Quantity { get; set; }
+        public decimal SubTotal { get; set; }
     }
 }

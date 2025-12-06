@@ -7,7 +7,7 @@ using _521.tpfinal.web.Services.Product.Interfaces;
 namespace _521.tpfinal.web.Pages.Admin
 {
     [Authorize(Roles = "Admin")]
-    public class AddProductModel : PageModel
+    public class EditProductModel : PageModel
     {
         private readonly IProductsService _productsService;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -15,7 +15,7 @@ namespace _521.tpfinal.web.Pages.Admin
         [BindProperty]
         public Product Product { get; set; } = new()
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.Empty,
             Name = "",
             Description = "",
             Price = 0m,
@@ -24,14 +24,35 @@ namespace _521.tpfinal.web.Pages.Admin
             CartItems = []
         };
 
-        public AddProductModel(IProductsService productsService, IHttpContextAccessor httpContextAccessor)
+        public EditProductModel(IProductsService productsService, IHttpContextAccessor httpContextAccessor)
         {
             _productsService = productsService;
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public void OnGet()
+        private string GetToken()
         {
+            return _httpContextAccessor.HttpContext?.User.FindFirst("jwt")?.Value ?? "";
+        }
+
+        public async Task<IActionResult> OnGetAsync(Guid id)
+        {
+            try
+            {
+                Product = await _productsService.GetByIdAsync(id);
+                if (Product == null)
+                {
+                    TempData["ErrorMessage"] = "Produit non trouvé.";
+                    return RedirectToPage("/Products/Products");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Erreur: {ex.Message}";
+                return RedirectToPage("/Products/Products");
+            }
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -43,8 +64,7 @@ namespace _521.tpfinal.web.Pages.Admin
 
             try
             {
-                // Récupérer le token JWT du cookie
-                var token = _httpContextAccessor.HttpContext?.User.FindFirst("jwt")?.Value ?? "";
+                var token = GetToken();
 
                 if (string.IsNullOrEmpty(token))
                 {
@@ -52,31 +72,16 @@ namespace _521.tpfinal.web.Pages.Admin
                     return Page();
                 }
 
-                // Vérifier que l'utilisateur est admin
-                var userRole = _httpContextAccessor.HttpContext?.User.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value ?? 
-                               _httpContextAccessor.HttpContext?.User.FindFirst("role")?.Value ?? "";
-                
-                if (userRole != "Admin")
-                {
-                    ModelState.AddModelError(string.Empty, "Vous n'avez pas les permissions pour ajouter un produit.");
-                    return Page();
-                }
-
-                // Générer un nouvel ID pour le produit
-                Product.Id = Guid.NewGuid();
-                Product.CartItems = [];
-
-                // Appeler le service pour ajouter le produit
-                var (success, message) = await _productsService.AddAsync(Product, token);
+                var (success, message) = await _productsService.UpdateAsync(Product.Id, Product, token);
 
                 if (success)
                 {
-                    TempData["SuccessMessage"] = "Produit ajouté avec succès!";
+                    TempData["SuccessMessage"] = "Produit modifié avec succès!";
                     return RedirectToPage("/Products/Products");
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, $"Erreur lors de l'ajout du produit: {message}");
+                    ModelState.AddModelError(string.Empty, $"Erreur lors de la modification: {message}");
                     return Page();
                 }
             }

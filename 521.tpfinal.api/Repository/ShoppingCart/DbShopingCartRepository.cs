@@ -19,12 +19,21 @@ namespace _521.tpfinal.api.Repository.ShoppingCart
 
         public Task AddItemToCart(models.CartItem item)
         {
-            var existingItem = this._context.CartItems.FirstOrDefault(i => i.Id == item.Id);
+            // Vérifier si le produit existe déjà dans le panier
+            var existingItem = this._context.CartItems
+                .FirstOrDefault(i => i.ShoppingCartId == item.ShoppingCartId && i.ProductId == item.ProductId);
+            
             if (existingItem != null)
             {
-                throw new Exception($"Item de panier avec l'ID {item.Id} existe déjà");
+                // Le produit existe déjà, on additionne la quantité
+                existingItem.Quantity += item.Quantity;
+                this._context.CartItems.Update(existingItem);
             }
-            this._context.CartItems.Add(item);
+            else
+            {
+                // Nouveau produit dans le panier
+                this._context.CartItems.Add(item);
+            }
             return this._context.SaveChangesAsync();
         }
 
@@ -50,8 +59,11 @@ namespace _521.tpfinal.api.Repository.ShoppingCart
 
         public Task<models.ShoppingCart?> GetCartByUserId(Guid userId)
         {
-            var existingCart = this._context.ShoppingCarts.Include(c => c.CartItems).ThenInclude(ci => ci.Product).FirstOrDefault(c => c.UserId == userId) ?? throw new Exception($"Panier pour l'utilisateur avec l'ID {userId} non trouvé");
-            return Task.FromResult<models.ShoppingCart?>(existingCart);
+            var existingCart = this._context.ShoppingCarts
+                .Include(c => c.CartItems)
+                .ThenInclude(ci => ci.Product)
+                .FirstOrDefault(c => c.UserId == userId);
+            return Task.FromResult(existingCart);
         }
 
         public Task<List<models.CartItem>> GetCartItems(Guid cartId)

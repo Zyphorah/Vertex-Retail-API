@@ -42,7 +42,7 @@ namespace _521.tpfinal.api.Controller
         }
 
         [HttpPost("items")]
-        public async Task<IActionResult> AddItemToCart(AddCartItemDto itemDto)
+        public async Task<IActionResult> AddItemToCart([FromBody] AddToCartRequestDto requestDto)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace _521.tpfinal.api.Controller
                     return BadRequest(ModelState);
                 }
 
-                if (itemDto.Quantity <= 0)
+                if (requestDto.Quantity <= 0)
                 {
                     return BadRequest(new { error = "La quantité doit être au moins 1" });
                 }
@@ -59,15 +59,24 @@ namespace _521.tpfinal.api.Controller
                 var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
                     ?? throw new Exception("Utilisateur non identifié"));
 
-                // Récupère le panier de l'utilisateur
+                // Récupère le panier de l'utilisateur ou en crée un nouveau
                 var cart = await _shoppingCartService.GetCartByUserId(userId);
                 if (cart == null)
                 {
-                    return NotFound(new { error = "Panier non trouvé" });
+                    // Créer un nouveau panier pour l'utilisateur
+                    var newCart = new models.Dtos.ShopingCart.ShoppingCartDto
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = userId,
+                        TotalPrice = 0,
+                        Items = []
+                    };
+                    await _shoppingCartService.Add(newCart);
+                    cart = newCart;
                 }
 
                 // Vérifie la disponibilité en stock
-                var stockAvailable = await _shoppingCartService.CheckStockAvailable(itemDto.ProductId, itemDto.Quantity);
+                var stockAvailable = await _shoppingCartService.CheckStockAvailable(requestDto.ProductId, requestDto.Quantity);
                 if (!stockAvailable)
                 {
                     return BadRequest(new { error = "Quantité insuffisante en stock" });
@@ -77,8 +86,8 @@ namespace _521.tpfinal.api.Controller
                 var addItemDto = new AddCartItemDto
                 {
                     ShoppingCartId = cart.Id,
-                    ProductId = itemDto.ProductId,
-                    Quantity = itemDto.Quantity
+                    ProductId = requestDto.ProductId,
+                    Quantity = requestDto.Quantity
                 };
 
                 await _shoppingCartService.AddItemToCart(addItemDto);
@@ -165,15 +174,23 @@ namespace _521.tpfinal.api.Controller
                     {
                         return BadRequest(new 
                         { 
-                            error = $"Stock insuffisant pour le produit '{item.ProductName}'. Quantité disponible: {item.Quantity}" 
+                            error = $"Stock insuffisant pour le produit '{item.ProductName}'. Quantité disponible insuffisante." 
                         });
                     }
                 }
 
-                // Vide le panier
-                await _shoppingCartService.ClearCart(cart.Id);
+                // Réduire le stock pour chaque produit acheté
+                foreach (var item in cart.Items)
+                {
+                    var product = await _productService.GetById(item.ProductId);
+                    if (product != null)
+                    {
+                        product.Stock -= item.Quantity;
+                        await _productService.Update(product);
+                    }
+                }
 
-                // Crée et retourne le reçu
+                // Préparer le reçu avant de vider le panier
                 var receipt = new
                 {
                     orderId = Guid.NewGuid(),
@@ -191,6 +208,9 @@ namespace _521.tpfinal.api.Controller
                     status = "Commande finalisée",
                     message = "Merci pour votre achat!"
                 };
+
+                // Vide le panier
+                await _shoppingCartService.ClearCart(cart.Id);
 
                 return Ok(receipt);
             }

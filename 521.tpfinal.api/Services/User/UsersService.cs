@@ -50,21 +50,22 @@ namespace _521.tpfinal.api.Services.User
                     Email = user.Email,
                     Role = user.Role,
                     PasswordHash = user.PasswordHash,
-                    ShoppingCarts = [.. user.ShoppingCarts.Select(sc => new ShoppingCartDto
+                    ShoppingCarts = user.ShoppingCarts != null ? [.. user.ShoppingCarts.Select(sc => new ShoppingCartDto
                     {
                         Id = sc.Id,
                         UserId = sc.UserId,
-                        Items = sc.CartItems.Select(ci => new CartItemDto
+                        Items = sc.CartItems != null ? sc.CartItems.Select(ci => new CartItemDto
                         {
+                            Id = ci.Id,
                             ShoppingCartId = ci.ShoppingCartId,
                             ProductId = ci.ProductId,
-                            ProductName = ci.Product.Name,
+                            ProductName = ci.Product?.Name ?? "Produit inconnu",
                             ProductPrice = ci.UnitPrice,
                             Quantity = ci.Quantity,
                             SubTotal = ci.Quantity * ci.UnitPrice
-                        }).ToList(),
+                        }).ToList() : [],
                         TotalPrice = sc.TotalPrice
-                    })]
+                    })] : []
                 };
                 userDtos.Add(userDto);
             }
@@ -86,21 +87,22 @@ namespace _521.tpfinal.api.Services.User
                 Email = user.Email,
                 Role = user.Role,
                 PasswordHash = user.PasswordHash,
-                ShoppingCarts = [.. user.ShoppingCarts.Select(sc => new ShoppingCartDto
+                ShoppingCarts = user.ShoppingCarts != null ? [.. user.ShoppingCarts.Select(sc => new ShoppingCartDto
                 {
                     Id = sc.Id,
                     UserId = sc.UserId,
-                    Items = [.. sc.CartItems.Select(ci => new CartItemDto
+                    Items = sc.CartItems != null ? [.. sc.CartItems.Select(ci => new CartItemDto
                     {
+                        Id = ci.Id,
                         ShoppingCartId = ci.ShoppingCartId,
                         ProductId = ci.ProductId,
-                        ProductName = ci.Product.Name,
+                        ProductName = ci.Product?.Name ?? "Produit inconnu",
                         ProductPrice = ci.UnitPrice,
                         Quantity = ci.Quantity,
                         SubTotal = ci.Quantity * ci.UnitPrice
-                    })],
+                    })] : [],
                     TotalPrice = sc.TotalPrice
-                })]
+                })] : []
             };
         }
 

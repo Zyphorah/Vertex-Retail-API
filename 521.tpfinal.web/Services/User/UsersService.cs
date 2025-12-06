@@ -5,6 +5,29 @@ namespace _521.tpfinal.web.Services.User
     {
         private readonly HttpClient _httpClient = httpClient;
 
+        public async Task<List<Models.User>> GetAllAsync(string token)
+        {
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            
+            var response = await _httpClient.GetAsync("api/users");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"[DEBUG] GetAllAsync response: {content}");
+                
+                var users = System.Text.Json.JsonSerializer.Deserialize<List<Models.User>>(content,
+                    new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return users ?? [];
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"[DEBUG] GetAllAsync error: {response.StatusCode} - {errorContent}");
+            }
+            return [];
+        }
+
         public Task<(bool success, string message)> CreateAdminAsync(Models.User user, string token)
         {
             this._httpClient.DefaultRequestHeaders.Clear();

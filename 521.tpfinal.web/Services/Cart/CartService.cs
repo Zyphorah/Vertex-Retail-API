@@ -12,7 +12,7 @@ namespace _521.tpfinal.web.Services.Cart
             this._httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             
             var payload = new { productId, quantity };
-            var response = await this._httpClient.PostAsJsonAsync("api/cart/add", payload);
+            var response = await this._httpClient.PostAsJsonAsync("api/cart/items", payload);
             
             if (response.IsSuccessStatusCode)
             {
@@ -20,11 +20,12 @@ namespace _521.tpfinal.web.Services.Cart
             }
             else
             {
-                return (false, $"Failed to add item to cart: {response.ReasonPhrase}");
+                var error = await response.Content.ReadAsStringAsync();
+                return (false, $"Failed to add item to cart: {error}");
             }
         }
 
-        public async Task<(bool success, Receipt receipt)> CheckoutAsync(string token)
+        public async Task<(bool success, Receipt? receipt)> CheckoutAsync(string token)
         {
             this._httpClient.DefaultRequestHeaders.Clear();
             this._httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
@@ -36,19 +37,20 @@ namespace _521.tpfinal.web.Services.Cart
                 var content = await response.Content.ReadAsStringAsync();
                 var receipt = System.Text.Json.JsonSerializer.Deserialize<Receipt>(content,
                     new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                return (true, receipt!);
+                return (true, receipt);
             }
             else
             {
+                var error = await response.Content.ReadAsStringAsync();
                 return (false, new Receipt 
                 { 
                     Status = "Failed", 
-                    Message = $"Checkout failed: {response.ReasonPhrase}" 
+                    Message = $"Checkout failed: {error}" 
                 });
             }
         }
 
-        public async Task<ShoppingCart> GetCartAsync(string token)
+        public async Task<CartResponse?> GetCartAsync(string token)
         {
             try
             {
@@ -60,18 +62,18 @@ namespace _521.tpfinal.web.Services.Cart
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
-                    var cart = System.Text.Json.JsonSerializer.Deserialize<ShoppingCart>(content,
+                    var cartResponse = System.Text.Json.JsonSerializer.Deserialize<CartResponse>(content,
                         new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                    return cart!;
+                    return cartResponse;
                 }
                 else
                 {
-                    throw new HttpRequestException($"Failed to get cart: {response.ReasonPhrase}");
+                    return null;
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                throw new HttpRequestException($"Error retrieving cart: {ex.Message}");
+                return null;
             }
         }
 
@@ -80,7 +82,7 @@ namespace _521.tpfinal.web.Services.Cart
             this._httpClient.DefaultRequestHeaders.Clear();
             this._httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             
-            var response = await this._httpClient.DeleteAsync($"api/cart/{cartItemId}");
+            var response = await this._httpClient.DeleteAsync($"api/cart/items/{cartItemId}");
             
             if (response.IsSuccessStatusCode)
             {
@@ -88,7 +90,8 @@ namespace _521.tpfinal.web.Services.Cart
             }
             else
             {
-                return (false, $"Failed to remove item from cart: {response.ReasonPhrase}");
+                var error = await response.Content.ReadAsStringAsync();
+                return (false, $"Failed to remove item from cart: {error}");
             }
         }
 
@@ -98,7 +101,7 @@ namespace _521.tpfinal.web.Services.Cart
             this._httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             
             var payload = new { quantity };
-            var response = await this._httpClient.PutAsJsonAsync($"api/cart/{cartItemId}", payload);
+            var response = await this._httpClient.PutAsJsonAsync($"api/cart/items/{cartItemId}", payload);
             
             if (response.IsSuccessStatusCode)
             {
@@ -106,7 +109,8 @@ namespace _521.tpfinal.web.Services.Cart
             }
             else
             {
-                return (false, $"Failed to update item quantity: {response.ReasonPhrase}");
+                var error = await response.Content.ReadAsStringAsync();
+                return (false, $"Failed to update item quantity: {error}");
             }
         }
     }

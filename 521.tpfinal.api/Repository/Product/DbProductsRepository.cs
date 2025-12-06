@@ -22,7 +22,7 @@ namespace _521.tpfinal.api.Repository.Product
         public Task<bool> Delete(ProductModel product)
         {
             var existingProduct = this._context.Products.FirstOrDefault(p => p.Id == product.Id) ?? throw new Exception($"Produit avec l'ID {product.Id} non trouvé");
-            this._context.Products.Remove(product);
+            this._context.Products.Remove(existingProduct);
             return Task.FromResult(this._context.SaveChanges() > 0);
         }
 
@@ -49,7 +49,14 @@ namespace _521.tpfinal.api.Repository.Product
         public Task Update(ProductModel product)
         {
             var existingProduct = this._context.Products.FirstOrDefault(p => p.Id == product.Id) ?? throw new Exception($"Produit avec l'ID {product.Id} non trouvé");
-            this._context.Products.Update(product);
+            
+            // Mettre à jour les propriétés de l'entité existante au lieu d'attacher une nouvelle
+            existingProduct.Name = product.Name;
+            existingProduct.Description = product.Description;
+            existingProduct.Price = product.Price;
+            existingProduct.Category = product.Category;
+            existingProduct.Stock = product.Stock;
+            
             return this._context.SaveChangesAsync();
         }
     }
