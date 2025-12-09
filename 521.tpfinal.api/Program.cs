@@ -65,6 +65,10 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    
+    // Elle vérifie si la DB existe. Sinon, elle la crée avec toutes les tables.
+    context.Database.EnsureCreated(); 
+    
     var passwordHasher = scope.ServiceProvider.GetRequiredService<PasswordHasher>();
     AdminInitializer.Initialize(context, passwordHasher);
 }
