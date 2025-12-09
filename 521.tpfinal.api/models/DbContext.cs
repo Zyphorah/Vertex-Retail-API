@@ -3,12 +3,8 @@ namespace _521.tpfinal.api.models
 {
     public class AppDbContext : DbContext
     {
-        public string DbPath { get; }
-
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            var folder = AppDomain.CurrentDomain.BaseDirectory;
-            DbPath = System.IO.Path.Join(folder, "app.db");
         }
         
         // On définit les tables de la BD que l'on désire accéder comme suit:
@@ -29,9 +25,18 @@ namespace _521.tpfinal.api.models
             modelBuilder.Entity<Product>()
                 .HasKey(p => p.Id);
             
+            // Configuration des types décimaux pour SQL Server
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Price)
+                .HasPrecision(18, 2);
+            
             // Configuration ShoppingCart
             modelBuilder.Entity<ShoppingCart>()
                 .HasKey(s => s.Id);
+            
+            modelBuilder.Entity<ShoppingCart>()
+                .Property(s => s.TotalPrice)
+                .HasPrecision(18, 2);
             
             // Relation: User -> ShoppingCart (1 utilisateur peut avoir plusieurs paniers)
             modelBuilder.Entity<ShoppingCart>()
@@ -43,6 +48,10 @@ namespace _521.tpfinal.api.models
             // Configuration CartItem
             modelBuilder.Entity<CartItem>()
                 .HasKey(c => c.Id);
+            
+            modelBuilder.Entity<CartItem>()
+                .Property(c => c.UnitPrice)
+                .HasPrecision(18, 2);
             
             // Relation: Product -> CartItem (1 produit peut être dans plusieurs paniers)
             modelBuilder.Entity<CartItem>()
@@ -59,12 +68,6 @@ namespace _521.tpfinal.api.models
                 .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
-        }
-
-        // Chargement de la BD à utiliser. La ligne va varier selon le type de BD.
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-        {
-            options.UseSqlite($"Data Source={DbPath}"); // Chargement de la BD
         }
     }
 }

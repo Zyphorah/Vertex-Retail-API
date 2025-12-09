@@ -1,6 +1,7 @@
 using _521.tpfinal.api.models;
 using _521.tpfinal.api.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -35,7 +36,17 @@ builder.Services.AddAuthentication(x =>
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
-builder.Services.AddDbContext<AppDbContext>();
+// Configuration de la base de données Azure SQL Server
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(connectionString, sqlOptions =>
+    {
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null);
+    }));
 
 // Enregistrer les repositories
 builder.Services.AddScoped<_521.tpfinal.api.Repository.User.Interfaces.IUsersRepository,
