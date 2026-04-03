@@ -1,6 +1,6 @@
 namespace _521.tpfinal.api.models
 {
-    public class User
+    public partial class User
     {
         public required Guid Id { get; set; }
 
